@@ -3,9 +3,10 @@ import path from 'path';
 import cors from 'cors';
 import { timeStamp } from 'console';
 import { get } from 'http';
+
 console.log("server file here")
 const app = express()
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 5001
 
 app.use(cors());
 app.use(express.json())
@@ -15,26 +16,28 @@ let products = [];
  
 app.post('/create', (req, res) => {
   const body = req.body;
+console.log(req.body);
+  if (!body.name || !body.price || !body.details) {
 
-  if (body.name && body.price && body.details) {
+    res.status(400).send(
+      {message:"Data Error PARAMETERS are Missing "})
+      return;
+  }
 
     console.log(body.name)
     console.log(body.price)
     console.log(body.details)
 
-    products.push({
+
+    products.unshift({
       id: `${new Date().getTime()}`,
-      nam: body.name,
+      name: body.name,
       price: body.price,
       details: body.details
     });
 
-    res.send({message:'Product added successfully at:- ' }+ new Date().toString())
-  }
-  else {
-    res.status(400).send(
-      {message:"Data Error PARA ARE MISSING"})
-  }
+     res.send({message:'Product added successfully at:- ' }+ new Date().toString())
+     console.log(products)
 })
 
 app.get('/products', (req, res) => {
@@ -46,7 +49,7 @@ app.get('/product/:id', (req, res) => {
 
   let isFound = false;
 
-  for (let i = 0; i < +products.length; i++) {
+  for (let i = 0; i <= products.length; i++) {
 
     if (products[i].id === id) {
       res.send(products[i])
@@ -58,19 +61,21 @@ app.get('/product/:id', (req, res) => {
 
   if (isFound === false) {
     res.status(404).send(
-      {messag:"Product not found"})
+      {message:"Product not found"})
   }
    
   return;
 });
 
-app.delete('/delete/:id', (req,res) => {
+app.delete('/product/:id', (req,res) => {
   let isFound =false;
   const id= req.params.id;
    
   for(let i=0;i<=products.length;i++)
   {
-    if(products.id === id){
+    if(products[i].id === id){
+       
+
      products.splice(i,1);
 
       res.send({message:"Product Deleted Successfully"})
@@ -133,19 +138,9 @@ app.put('/product/:id', (req, res) => {
   }
 
 })
-
-
-
-
-
-
-
-
-
-
-// const __dirname = path.resolve();
-// app.use('/', express.static(path.join(__dirname, './web/build')))
-// app.use('*', express.static(path.join(__dirname, './web/build')))
+const __dirname = path.resolve();
+app.use('/', express.static(path.join(__dirname, './web/build')))
+app.use('*', express.static(path.join(__dirname, './web/build')))
 
 
 app.listen(port, () => {
