@@ -94,6 +94,8 @@ app.delete('/product/:id', (req,res) => {
 app.put('/product/:id', (req, res) => {
 
   const body = req.body;
+  const id= req.params.id;
+  let isFound =false;
 
   if (body.name && body.price && body.details) {
 
@@ -101,19 +103,16 @@ app.put('/product/:id', (req, res) => {
     console.log(body.price)
     console.log(body.details)
 
-    let isFound =false;
-  const id= req.params.id;
-   
   for(let i=0;i<=products.length;i++)
   {
-    if(products.id === id){
+    if(products[i].id === id){
     
       products[i].name= body.name
       products[i].price= body.price
       products[i].details= body.details
 
       products.push({
-        id: new Date().getTime(),
+        id: id,
         nam: body.name,
         price: body.price,
         details: body.details

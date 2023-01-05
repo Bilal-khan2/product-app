@@ -5,16 +5,15 @@ import * as yup from 'yup';
 import "./style.css"
 
 export const App = () => {
+  // Use states
 
   // product fetch and display part
   const [product, setProduct] = useState([]);
   // dependancy variable
   const [loadProduct, getLoadproduct] = useState(false);
   // edit
-  const [isEdit, getIsEditing] = useState(false);
-  
-  const [isEditing, getDoneEditing] = useState({});
-
+  const [iseditmode,seteditmode]=useState(false);
+  const [iseditingProduct,seteditingProduct]=useState(null);
 
   // getting and displaying  product
   let displayProducts = async () => {
@@ -47,21 +46,11 @@ export const App = () => {
 
   }
   // editing Product
-  let editMode = (async (product) => {
-    try {
-      // const response = await axios.put(`http://localhost:5001/product/${id}`)
-      // console.log("response", response.data)
-     getIsEditing(!isEdit)
-      getDoneEditing(product)
+  let editmode=(product)=>{
+    seteditmode(!iseditmode)
+      seteditingProduct(product)
 
-    } catch (error) {
-      console.log("Error getting all products :", error)
-
-    }
-
-  })
-
-
+  }
   // validation part
   const validationSchema = yup.object({
     productName: yup
@@ -91,7 +80,7 @@ export const App = () => {
       console.log(values)
 
       // edited data sending to database part
-      axios.put(`http://localhost:5001/product/${values.id}`, {
+      axios.put(`http://localhost:5001/product/${iseditingProduct.id}`, {
 
         name: values.productName,
         price: values.productPrice,
@@ -100,7 +89,7 @@ export const App = () => {
         .then(response => {
           console.log("response", response.data)
           // we have called the display product function below which enables us to display product immediatly after we all the product which shows post without page reloading
-          displayProducts();
+          // displayProducts();
           // depedancey array can also be used
 
           getLoadproduct(!loadProduct)
@@ -202,6 +191,48 @@ export const App = () => {
           <p>{eachproduct.price}</p>
           <p>{eachproduct.details}</p>
           <button onClick={() => { deleteProduct(eachproduct.id) }}>Delete</button>
+          <button onClick={()=>{editmode(eachproduct)}} >Edit</button>
+
+          {(iseditmode && iseditingProduct.id === eachproduct.id)?
+          <div>
+            <form onSubmit={editformik.handleSubmit}>
+        <input
+
+          id="productName"
+          placeholder='Product Name'
+
+          value={editformik.values.productName || iseditingProduct.name }
+          onChange={editformik.handleChange}
+          error={editformik.touched.productName && (editformik.errors.productName)}
+        />
+        {(editformik.touched.productName && (editformik.errors.productName) ? <span style={{ color: "red" }}>{editformik.errors.productName}</span> : null)}   <br />
+
+        <input
+
+          id="productPrice"
+          placeholder='Product Price'
+          value={editformik.values.productPrice || iseditingProduct.price}
+          onChange={editformik.handleChange}
+        />
+        {(editformik.touched.productPrice && (editformik.errors.productPrice) ? <span style={{ color: "red" }}>{editformik.errors.productPrice}</span> : null)}
+        <br />
+
+        <input
+
+          id="productDetails"
+          placeholder='Product Details'
+
+          value={editformik.values.productDetails || iseditingProduct.details}
+          onChange={editformik.handleChange}
+        />
+        {(editformik.touched.productDetails && (editformik.errors.productDetails) ? <span style={{ color: "red" }}>{editformik.errors.productDetails}</span> : null)}
+        <br />
+        <button variant="contained" type="submit">
+          Submit
+        </button>
+      </form>
+          </div>
+          :null}
 
         </div>
 
