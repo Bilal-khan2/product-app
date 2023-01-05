@@ -203,59 +203,6 @@ export const App = () => {
           <p>{eachproduct.details}</p>
           <button onClick={() => { deleteProduct(eachproduct.id) }}>Delete</button>
 
-
-          <button onClick={() => { editMode(eachproduct) }}>Edit</button>
-
-          {(editMode && isEditing.id === eachproduct.id) ? 
-          
-          <div className="edit">
-
-            <form onSubmit={editformik.handleSubmit}>
-              <input
-
-                id="productName"
-                name="productName"
-                label="productName"
-                placeholder='Product Name'
-
-                value={editformik.values.productName}
-                onChange={editformik.handleChange}
-                error={editformik.touched.productName && (editformik.errors.productName)}
-              />
-               {(editformik.touched.productName && (editformik.errors.productName) ? <span style={{ color: "red" }}>{editformik.errors.productName}</span>
-                : null)}   <br />
-
-              <input
-
-                id="productPrice"
-                name="productPrice"
-                label="productPrice"
-                placeholder='Product Price'
-
-
-                value={formik.values.productPrice}
-                onChange={formik.handleChange}
-              />
-              {(editformik.touched.productPrice && (editformik.errors.productPrice) ? <span style={{ color: "red" }}>{editformik.errors.productPrice}</span> : null)}
-              <br />
-
-              <input
-
-                id="productDetails"
-                name="productDetails"
-                label="productDetails"
-                placeholder='Product Details'
-
-                value={editformik.values.productDetails}
-                onChange={editformik.handleChange}
-              />
-              {(editformik.touched.productDetails && (editformik.errors.productDetails) ? <span style={{ color: "red" }}>{editformik.errors.productDetails}</span> : null)}
-              <br />
-              <button variant="contained" type="submit">
-                Submit
-              </button>
-            </form>
-          </div> : null}
         </div>
 
       ))}
