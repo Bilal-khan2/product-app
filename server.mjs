@@ -110,10 +110,10 @@ app.put('/product/:id', (req, res) => {
       products[i].name= body.name
       products[i].price= body.price
       products[i].details= body.details
-
+      
       products.push({
         id: id,
-        nam: body.name,
+        name: body.name,
         price: body.price,
         details: body.details
       });

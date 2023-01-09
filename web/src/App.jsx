@@ -184,8 +184,8 @@ export const App = () => {
       <br />
 
       {/* displaying Product on Homepage */}
-      {product.map((eachproduct) => (
-        <div key={eachproduct.id} className="display">
+      {product.map((eachproduct, i) => (
+        <div key={eachproduct.id +i} className="display">
           <p>{eachproduct.id}</p>
           <h2>{eachproduct.name}</h2>
           <p>{eachproduct.price}</p>
