@@ -1,18 +1,28 @@
 import express from 'express';
 import path from 'path';
 import cors from 'cors';
-import { timeStamp } from 'console';
-import { get } from 'http';
+import mongoose from 'mongoose';
 
 console.log("server file here")
 const app = express()
 const port = process.env.PORT || 5001
+const mongodbURI = process.env.PORT || "mongodb+srv://Bilalhamid:database1@cluster0.glxr0dt.mongodb.net/?retryWrites=true&w=majority"
+
+
 
 app.use(cors());
 app.use(express.json())
 
 let products = [];
 
+let productSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  price: Number,
+  details: String,
+  createdOn: { type: Date, default: Date.now }
+});
+
+const productModel = mongoose.model('products', productSchema);
  
 app.post('/create', (req, res) => {
   const body = req.body;
@@ -29,13 +39,31 @@ console.log(req.body);
     console.log(body.details)
 
 
-    products.unshift({
-      id: `${new Date().getTime()}`,
+    // products.unshift({
+    //   id: `${new Date().getTime()}`,
+    //   name: body.name,
+    //   price: body.price,
+    //   details: body.details
+    // });
+
+    productModel.create({
       name: body.name,
       price: body.price,
-      details: body.details
-    });
-
+      details: body.details,
+    },
+      (err, saved) => {
+        if (!err) {
+          console.log(saved);
+  
+          res.send({
+            message: "your product is saved"
+          })
+        } else {
+          res.status(500).send({
+            message: "server error"
+          })
+        }
+      })
      res.send({message:'Product added successfully at:- ' }+ new Date().toString())
      console.log(products)
 })
@@ -145,3 +173,31 @@ app.use('*', express.static(path.join(__dirname, './web/build')))
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 }) 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+mongoose.connect(mongodbURI);
+
+
+////////////////mongodb connected disconnected events///////////////////////////////////////////////
+mongoose.connection.on('connected', function () {//connected
+  console.log("Mongoose is connected");
+});
+
+mongoose.connection.on('disconnected', function () {//disconnected
+  console.log("Mongoose is disconnected");
+  process.exit(1);
+});
+
+mongoose.connection.on('error', function (err) {//any error
+  console.log('Mongoose connection error: ', err);
+  process.exit(1);
+});
+
+process.on('SIGINT', function () {/////this function will run jst before app is closing
+  console.log("app is terminating");
+  mongoose.connection.close(function () {
+    console.log('Mongoose default connection closed');
+    process.exit(0);
+  });
+});
+////////////////mongodb connected disconnected events///////////////////////////////////////////////
