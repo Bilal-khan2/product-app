@@ -111,12 +111,12 @@ app.put('/product/:id', (req, res) => {
       products[i].price= body.price
       products[i].details= body.details
       
-      products.push({
-        id: id,
-        name: body.name,
-        price: body.price,
-        details: body.details
-      });
+      // products.push({
+      //   id: id,
+      //   name: body.name,
+      //   price: body.price,
+      //   details: body.details
+      // });
 
       res.send({message:"Product Modification Successfully"})
 
